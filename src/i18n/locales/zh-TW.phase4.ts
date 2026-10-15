@@ -96,7 +96,7 @@ const zhTWPhase4 = {
     issues: {
       'invalid-base': 'Base Network「{value}」格式錯誤，應為 x.x.x.x/nn',
       'base-normalized': '「{value}」不在網段邊界上，已使用 {network}',
-      'no-requirements': '請至少新增一個需求',
+      'no-requirements': '還沒有網段：按「新增一列」加入第一個 VLAN，或點上面的範例開始',
       'invalid-hosts': '{name}：Host 數「{value}」必須是 1 以上的整數',
       'invalid-vlan': '{name}：VLAN {value} 超出範圍（1 ~ 4094）',
       'duplicate-vlan': '{name}：VLAN {vlan} 已經被 {other} 使用',

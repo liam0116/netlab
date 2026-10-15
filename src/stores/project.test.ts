@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { nextTick } from 'vue'
 import { useProjectStore } from './project'
-import { useProjectPlanStore, useToolPlannerStore } from './planner'
+import { dgxPreset, useProjectPlanStore, useToolPlannerStore } from './planner'
 
 // Tests run in Node: give the stores an in-memory localStorage so persistence is exercised too.
 const memory = new Map<string, string>()
@@ -20,6 +20,28 @@ beforeEach(() => {
 })
 
 describe('project store', () => {
+  it('starts a new project with no IP plan; the stand-alone planner keeps its example', () => {
+    const p = useProjectStore()
+    expect(useProjectPlanStore().requirements).toEqual([])
+    expect(p.title).toBe('—')
+    expect(p.unsaved).toBe(false)
+    expect(useToolPlannerStore().project).toBe('DGX Spark Lab')
+  })
+
+  it('drops the untouched DGX example that older versions put into an empty project', () => {
+    memory.set('netlab.planner', JSON.stringify(dgxPreset()))
+    expect(useProjectStore().title).toBe('—')
+    // An edited plan, or one in a project with content, is kept.
+    const edited = { ...dgxPreset(), project: 'My lab' }
+    memory.set('netlab.planner', JSON.stringify(edited))
+    setActivePinia(createPinia())
+    expect(useProjectStore().title).toBe('My lab')
+    memory.set('netlab.planner', JSON.stringify(dgxPreset()))
+    memory.set('netlab.project', JSON.stringify({ meta: { customer: 'ACME' } }))
+    setActivePinia(createPinia())
+    expect(useProjectStore().title).toBe('DGX Spark Lab')
+  })
+
   it('loads the demo into every store and snapshots it back', () => {
     const p = useProjectStore()
     p.loadDemo('en')

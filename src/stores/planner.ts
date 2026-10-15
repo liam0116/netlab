@@ -26,6 +26,22 @@ export function dgxPreset(): PlannerState {
   }
 }
 
+/** A plan with nothing in it: where a new customer project starts. */
+export function emptyPlan(): PlannerState {
+  return {
+    project: '',
+    options: { base: '10.10.0.0/16', strategy: 'vlsm', gateway: 'first', growthPercent: 0, reserveGateway: true },
+    requirements: [],
+  }
+}
+
+/** True for the DGX example exactly as it was preset, i.e. nobody has edited it. */
+export function isUntouchedDgxPreset(s: PlannerState): boolean {
+  const preset = dgxPreset()
+  const sig = (p: PlannerState) => JSON.stringify([p.project, p.options, p.requirements.map((r) => [r.name, r.vlan, r.hosts])])
+  return sig(s) === sig(preset)
+}
+
 /** Spec section 十: one-click VLSM plan out of 10.10.0.0/16. */
 export function vlsmPreset(): PlannerState {
   return {
@@ -41,7 +57,7 @@ export function vlsmPreset(): PlannerState {
   }
 }
 
-function load(key: string): PlannerState {
+function load(key: string, fallback: () => PlannerState): PlannerState {
   try {
     const raw = localStorage.getItem(key)
     if (raw) {
@@ -49,9 +65,9 @@ function load(key: string): PlannerState {
       if (typeof s.project === 'string' && s.options && Array.isArray(s.requirements)) return s as PlannerState
     }
   } catch {
-    // fall through to the preset
+    // fall through to the default
   }
-  return dgxPreset()
+  return fallback()
 }
 
 /**
@@ -60,8 +76,8 @@ function load(key: string): PlannerState {
  *  - useProjectPlanStore: the current project's plan (Project → IP Plan; saved in project files)
  *  - useToolPlannerStore: the scratch plan of Tools → IP Planner
  */
-const definePlannerStore = (id: string, storageKey: string) => defineStore(id, () => {
-  const initial = load(storageKey)
+const definePlannerStore = (id: string, storageKey: string, fallback: () => PlannerState) => defineStore(id, () => {
+  const initial = load(storageKey, fallback)
   const project = ref(initial.project)
   const options = ref<PlanOptions>(initial.options)
   const requirements = ref<PlanRequirement[]>(initial.requirements)
@@ -105,6 +121,7 @@ const definePlannerStore = (id: string, storageKey: string) => defineStore(id, (
 })
 
 // 'netlab.planner' already holds the current project's plan for existing users, so the project keeps that key.
-export const useProjectPlanStore = definePlannerStore('planner', 'netlab.planner')
-export const useToolPlannerStore = definePlannerStore('plannerTool', 'netlab.plannerTool')
+// A new project starts with no plan; the stand-alone calculator starts with the DGX example to play with.
+export const useProjectPlanStore = definePlannerStore('planner', 'netlab.planner', emptyPlan)
+export const useToolPlannerStore = definePlannerStore('plannerTool', 'netlab.plannerTool', dgxPreset)
 export type PlannerStore = ReturnType<typeof useProjectPlanStore>

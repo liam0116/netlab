@@ -539,6 +539,13 @@ const enPhase5: typeof zhTWPhase5 = {
     signName: 'Name',
     signDate: 'Date',
     signature: 'Signature',
+    untitled: 'Untitled project',
+    noData: '(no data)',
+    emptyProject: 'The current project is still empty: there is nothing to hand over yet.',
+    emptyProjectHint: 'The report is assembled from the project: customer details, IP plan, racks, cabling, services and flowcharts. Start in Projects with the customer and project name, then fill in the other pages; or load the sample project to see a finished report.',
+    goProject: 'Go to Projects',
+    loadDemo: 'Load sample project',
+    missingMeta: 'The cover is missing: {fields}.',
     empty: 'No data for this section.',
   },
   raidPage: {

@@ -22,7 +22,7 @@ import { emptyMeta, emptyProject, parseProjectFile, serializeProject, type Parse
 import { checkRack, firstFreeU, RACK_TEMPLATES } from '@/utils/rack'
 import { gridRackName, nextFreeRow, rackGrid, rowLetter } from '@/utils/floor'
 import { planArchitecture, type ArchitectureKind, type ArchitectureOptions } from '@/utils/architecture'
-import { useProjectPlanStore } from './planner'
+import { emptyPlan, isUntouchedDgxPreset, useProjectPlanStore } from './planner'
 
 const CURRENT_KEY = 'netlab.project'
 const LIBRARY_KEY = 'netlab.projects'
@@ -87,6 +87,10 @@ export const useProjectStore = defineStore('project', () => {
   const planner = useProjectPlanStore()
 
   const initial = loadParts() ?? emptyProject()
+  // Up to v1.3.4 an empty project silently got the DGX example plan, which then showed up as the project
+  // name in the handover report. Drop it when it was never edited and the project has nothing else.
+  const m0 = initial.meta
+  if (!m0.customer && !m0.project && !initial.racks.length && isUntouchedDgxPreset(planner.snapshot())) planner.apply(emptyPlan())
   const meta = ref<ProjectMeta>(initial.meta)
   const racks = ref<Rack[]>(initial.racks)
   const rackItems = ref<RackItem[]>(initial.rackItems)

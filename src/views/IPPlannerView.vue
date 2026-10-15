@@ -32,6 +32,8 @@ const { t } = useI18n()
 const result = computed(() => store.result)
 const issuesFor = (id: string) => result.value.issues.filter((i) => i.requirementId === id)
 const generalIssues = computed(() => result.value.issues.filter((i) => !i.requirementId))
+/** The project's name for sentences, never the "—" placeholder. */
+const projectName = computed(() => (project.title === '—' ? t('reportPage.untitled') : project.title))
 
 /** Live CIDR suggestion next to each requirement row. */
 function suggested(hosts: number): string {
@@ -99,7 +101,7 @@ function applyToProject(): void {
   }
   confirmApply.value = false
   useProjectPlanStore().apply(store.snapshot())
-  appliedTo.value = project.title
+  appliedTo.value = projectName.value
 }
 const exportCsv = () => downloadText(`${fileBase.value}.csv`, planToCsv(result.value.subnets), 'text/csv', true)
 const exportJson = () => downloadText(`${fileBase.value}.json`, planToJson(store.project, store.options, result.value), 'application/json')
@@ -136,7 +138,7 @@ function numberOrNull(raw: string): number | null {
     <PageHeader
       v-if="isProject"
       :title="t('plannerPage.inProject.title')"
-      :description="t('plannerPage.inProject.desc', { name: project.title })"
+      :description="t('plannerPage.inProject.desc', { name: projectName })"
       :icon="MapPinned"
     />
     <PageHeader v-else :title="t('plannerPage.title')" :description="t('plannerPage.desc')" :icon="MapIcon" />
@@ -273,7 +275,8 @@ function numberOrNull(raw: string): number | null {
     </section>
 
     <ul v-if="generalIssues.length" class="space-y-1 text-sm">
-      <li v-for="(issue, i) in generalIssues" :key="i" :class="issue.level === 'error' ? 'text-err' : 'text-warn'">
+      <!-- An empty plan is where every plan starts: a hint, not an error. -->
+      <li v-for="(issue, i) in generalIssues" :key="i" :class="issue.code === 'no-requirements' ? 'text-muted' : issue.level === 'error' ? 'text-err' : 'text-warn'">
         {{ t(`plannerPage.issues.${issue.code}`, issue.params) }}
       </li>
     </ul>

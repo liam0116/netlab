@@ -538,6 +538,13 @@ const zhTWPhase5 = {
     signName: '姓名',
     signDate: '日期',
     signature: '簽名',
+    untitled: '未命名專案',
+    noData: '（無資料）',
+    emptyProject: '目前的專案還是空的，沒有東西可以交付。',
+    emptyProjectHint: '交付文件會自動整理專案裡的客戶資訊、IP 規劃、機櫃、佈線、服務與流程圖。先到 Projects 填客戶與專案名稱，再到各頁面輸入資料；或先載入範例專案看看完成的樣子。',
+    goProject: '前往 Projects 填寫',
+    loadDemo: '載入範例專案',
+    missingMeta: '封面還缺：{fields}。',
     empty: '這個章節沒有資料。',
   },
   raidPage: {

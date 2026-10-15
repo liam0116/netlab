@@ -1,22 +1,49 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { FileText, Printer } from 'lucide-vue-next'
+import { FileText, FolderKanban, Printer, Sparkles } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import RackElevation from '@/components/project/RackElevation.vue'
 import ServiceDiagram from '@/components/project/ServiceDiagram.vue'
 import FlowchartDiagram from '@/components/project/FlowchartDiagram.vue'
+import { useProjectPlanStore } from '@/stores/planner'
 import { useProjectStore } from '@/stores/project'
+import { useSettingsStore } from '@/stores/settings'
 import { cableRows } from '@/utils/cabling'
 import { firewallRows } from '@/utils/flows'
 import { rackTotals } from '@/utils/rack'
 
 const project = useProjectStore()
+const plan = useProjectPlanStore()
+const settings = useSettingsStore()
 const { t, tm, rt } = useI18n()
 
 const SECTIONS = ['cover', 'summary', 'ip', 'racks', 'inventory', 'cabling', 'services', 'flowcharts', 'signoff'] as const
 type Section = (typeof SECTIONS)[number]
-const enabled = ref<Record<Section, boolean>>(Object.fromEntries(SECTIONS.map((s) => [s, true])) as Record<Section, boolean>)
+/** Which sections have anything to show. Empty ones start unticked so the printout has no blank chapters. */
+const hasData = computed<Record<Section, boolean>>(() => ({
+  cover: true,
+  summary: true,
+  ip: project.subnets.length > 0,
+  racks: project.racks.length > 0,
+  inventory: project.rackItems.some((i) => i.type !== 'blank'),
+  cabling: project.cables.length > 0,
+  services: project.services.length + project.flows.length > 0,
+  flowcharts: project.flowcharts.length > 0,
+  signoff: true,
+}))
+const enabled = ref<Record<Section, boolean>>({ ...hasData.value })
+/** Nothing entered yet: show how to start instead of a document full of empty chapters. */
+const isEmpty = computed(() => !project.meta.customer && !project.meta.project && SECTIONS.every((s) => ['cover', 'summary', 'signoff'].includes(s) || !hasData.value[s]))
+/** Cover details still missing, listed above the preview (not printed). */
+const missingMeta = computed(() => (['customer', 'project'] as const).filter((k) => !(k === 'project' ? project.meta.project || plan.project : project.meta[k])))
+const docTitle = computed(() => project.meta.project || plan.project || t('reportPage.untitled'))
+
+function loadDemo(): void {
+  project.loadDemo(settings.locale)
+  enabled.value = { ...hasData.value }
+}
 
 /** Numbered headings for the sections actually included. */
 const numbered = computed(() => {
@@ -40,7 +67,7 @@ const cableTable = computed(() => cableRows(project.rackItems, project.cables))
 const fwTable = computed(() => firewallRows(project.services, project.flows))
 const metaRows = computed(() =>
   (['customer', 'project', 'site', 'engineer', 'company', 'date'] as const)
-    .map((k) => ({ label: t(`reportPage.meta.${k}`), value: project.meta[k] || (k === 'project' ? project.title : '') }))
+    .map((k) => ({ label: t(`reportPage.meta.${k}`), value: project.meta[k] || (k === 'project' ? plan.project : '') }))
     .filter((r) => r.value),
 )
 const summaryRows = computed(() => [
@@ -61,21 +88,34 @@ const kw = (w: number) => (w >= 1000 ? `${(w / 1000).toFixed(1)} kW` : `${Math.r
     <div class="space-y-4 print:hidden">
       <PageHeader :title="t('reportPage.title')" :description="t('reportPage.desc')" :icon="FileText">
         <template #actions>
-          <button class="btn btn-primary" @click="printDoc"><Printer class="size-4" /> {{ t('reportPage.print') }}</button>
+          <button class="btn btn-primary" :disabled="isEmpty" @click="printDoc"><Printer class="size-4" /> {{ t('reportPage.print') }}</button>
         </template>
       </PageHeader>
-      <div class="card flex flex-wrap items-center gap-x-4 gap-y-2 p-3 text-sm">
+      <div v-if="isEmpty" class="card space-y-3 p-6 text-center text-sm">
+        <p class="font-medium">{{ t('reportPage.emptyProject') }}</p>
+        <p class="text-muted">{{ t('reportPage.emptyProjectHint') }}</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <RouterLink to="/project" class="btn btn-primary"><FolderKanban class="size-4" /> {{ t('reportPage.goProject') }}</RouterLink>
+          <button class="btn" @click="loadDemo"><Sparkles class="size-4" /> {{ t('reportPage.loadDemo') }}</button>
+        </div>
+      </div>
+      <div v-if="!isEmpty" class="card flex flex-wrap items-center gap-x-4 gap-y-2 p-3 text-sm">
         <span class="text-xs text-muted">{{ t('reportPage.sections') }}</span>
         <label v-for="s in SECTIONS" :key="s" class="flex items-center gap-1.5">
           <input v-model="enabled[s]" type="checkbox" class="accent-[var(--accent)]" />
           {{ t(`reportPage.s.${s}`) }}
+          <span v-if="!hasData[s]" class="text-xs text-muted">{{ t('reportPage.noData') }}</span>
         </label>
       </div>
-      <p class="text-xs text-muted">{{ t('reportPage.printHint') }}</p>
+      <p v-if="!isEmpty && missingMeta.length" class="text-xs text-warn">
+        {{ t('reportPage.missingMeta', { fields: missingMeta.map((k) => t(`reportPage.meta.${k}`)).join(t('maintenancePage.listSep')) }) }}
+        <RouterLink to="/project" class="underline">{{ t('reportPage.goProject') }}</RouterLink>
+      </p>
+      <p v-if="!isEmpty" class="text-xs text-muted">{{ t('reportPage.printHint') }}</p>
     </div>
 
     <!-- Document -->
-    <article class="paper mx-auto max-w-[210mm] rounded-lg border border-line px-10 py-10 text-sm shadow-sm print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none">
+    <article v-if="!isEmpty" class="paper mx-auto max-w-[210mm] rounded-lg border border-line px-10 py-10 text-sm shadow-sm print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none">
       <!-- Cover -->
       <section v-if="enabled.cover" class="flex min-h-[60vh] flex-col justify-between print:min-h-[250mm]">
         <div class="flex items-start justify-between gap-6">
@@ -84,7 +124,7 @@ const kw = (w: number) => (w >= 1000 ? `${(w / 1000).toFixed(1)} kW` : `${Math.r
         </div>
         <div>
           <div class="text-sm tracking-widest text-muted uppercase">{{ t('reportPage.docTitle') }}</div>
-          <h1 class="mt-2 text-3xl font-bold">{{ project.title }}</h1>
+          <h1 class="mt-2 text-3xl font-bold" :class="{ 'text-muted': docTitle === t('reportPage.untitled') }">{{ docTitle }}</h1>
           <div v-if="project.meta.customer" class="mt-1 text-lg text-muted">{{ project.meta.customer }}</div>
           <dl class="mt-8 grid max-w-md grid-cols-[7rem_1fr] gap-y-1.5">
             <template v-for="r in metaRows" :key="r.label">

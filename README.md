@@ -3,7 +3,7 @@
 給伺服器 / 設備工程師的現場工具與 TCP/IP 學習網站：客戶專案規劃（IP、機櫃、佈線、流程圖、交付文件）、硬體維修工單，以及網路計算工具與新手教學。
 所有 IPv4 計算都用真正的 32-bit bitwise 運算完成（`src/utils/network.ts`），並有 Unit Test 覆蓋。
 
-目前版本：**v1.3.4**
+目前版本：**v1.3.5**
 
 ## 手機 / 平板使用（主要用法）
 
@@ -76,7 +76,7 @@ docker compose down                                         # 停止
 | **Service Flows 服務互動圖**：服務與連線（協定 / Port），自動畫圖並產生防火牆開通申請表（CSV） | `/project/flows` |
 | **Flowcharts 流程圖**：安裝 / 硬體維修 / VM 遷移 / 資料搬移 / 網路排查範本；適用對象（VM / 主機 / 系統）、插入步驟、上下移、複製；匯出 SVG / PNG | `/project/flowcharts` |
 | **Config Generator 設定檔產生器**：netplan、nmcli（LACP Bond + VLAN）、Cisco / Arista、華為 VRP、BMC ipmitool、/etc/hosts | `/project/config` |
-| **Handover Report 交付文件**：封面、摘要、IP 規劃、機櫃圖、設備清單、佈線、服務與防火牆、流程圖、簽收欄；列印 / 存成 PDF（機櫃與圖表不會被分頁切開） | `/project/report` |
+| **Handover Report 交付文件**：封面、摘要、IP 規劃、機櫃圖、設備清單、佈線、服務與防火牆、流程圖、簽收欄；沒有資料的章節預設不勾、封面缺客戶或專案名稱會提醒；列印 / 存成 PDF（機櫃與圖表不會被分頁切開） | `/project/report` |
 
 ### Service · 維修服務
 專案是「新建置」的規劃；維修是對**已上線機器**的服務，所以工單另外存放，不會混進專案檔。

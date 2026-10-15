@@ -97,7 +97,7 @@ const enPhase4: typeof zhTWPhase4 = {
     issues: {
       'invalid-base': 'Base network "{value}" is invalid; expected x.x.x.x/nn',
       'base-normalized': '"{value}" is not on a network boundary; using {network}',
-      'no-requirements': 'Add at least one requirement',
+      'no-requirements': 'No subnets yet: use Add row for the first VLAN, or start from one of the examples above',
       'invalid-hosts': '{name}: host count "{value}" must be a whole number of at least 1',
       'invalid-vlan': '{name}: VLAN {value} is out of range (1–4094)',
       'duplicate-vlan': '{name}: VLAN {vlan} is already used by {other}',
