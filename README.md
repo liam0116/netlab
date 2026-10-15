@@ -22,6 +22,8 @@
 > 因為瀏覽器本身不能 ping 或測 Port，現場也不會帶電腦。要測試請直接在客戶伺服器上打指令，
 > Port Reference、Linux Commands、Troubleshooting 都有現成指令可以複製。
 
+> 要修改程式？先讀 [CLAUDE.md](CLAUDE.md)（設計原則、程式放哪裡、怎麼驗證）。
+
 ## 快速啟動
 
 ### 方法一：本機開發（Node.js 22+）
@@ -195,6 +197,7 @@ src/
 │   └── quiz.ts            # 小測驗題目產生器（答案由上述模組計算）
 └── views/           # 每個頁面一個 *View.vue
 docker/              # nginx 設定範本、安全標頭
+CLAUDE.md            # 開發說明：設計原則、src 放置規則、資料保存、驗證流程（給 AI 與新進開發者）
 docs/DEPLOY.md       # 部署成靜態網站、手機 / 平板安裝與離線使用
 docs/DOCKER.md       # Docker 中文設定說明
 .github/workflows/   # 推到 main 自動測試、建置並部署到 GitHub Pages
