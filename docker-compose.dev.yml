@@ -1,0 +1,31 @@
+# =============================================================================
+# Server Engineer Network Lab — 開發環境（Development）
+#
+# 用途：修改程式碼時使用，存檔後網頁自動重新載入。
+# 一般使用（正式 / 測試）不需要這個檔案。
+#   網頁：http://localhost:5173
+#
+# 指令：
+#   docker compose -f docker-compose.dev.yml up        # 前景執行（Ctrl+C 停止）
+#   docker compose -f docker-compose.dev.yml down
+#
+# 不想用 Docker 也可以直接：npm run dev（需要 Node.js 22）
+# =============================================================================
+
+name: netlab-dev
+
+services:
+  dev:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - ./:/app                          # 掛載原始碼：改檔案立刻生效
+      - dev_node_modules:/app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+volumes:
+  dev_node_modules:

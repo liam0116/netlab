@@ -1,0 +1,23 @@
+# =============================================================================
+# Server Engineer Network Lab — 測試環境（Test）
+#
+# 用途：試用新版本，不影響正式環境：
+#   網頁：http://localhost:8081（正式是 8080，兩個可以同時開）
+#   映像：netlab-web:test（不會覆蓋正式的 :latest）
+#   專案資料：瀏覽器是依「網址 + port」分開存的，所以 8081 看不到 8080 的專案，互不影響。
+#
+# 設定直接「繼承」正式環境 docker-compose.yml（extends），只覆蓋 port 與映像名稱。
+#
+# 指令（每個指令都要帶 -f docker-compose.test.yml）：
+#   docker compose -f docker-compose.test.yml up -d --build   # 建置並啟動測試環境
+#   docker compose -f docker-compose.test.yml down            # 停止
+# =============================================================================
+
+name: netlab-test
+
+services:
+  web:
+    extends: { file: docker-compose.yml, service: web }
+    image: netlab-web:test
+    ports: !override
+      - "${WEB_BIND:-127.0.0.1}:${TEST_WEB_PORT:-8081}:80"

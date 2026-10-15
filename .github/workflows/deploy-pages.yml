@@ -1,0 +1,49 @@
+# 推到 main 之後自動：跑測試 → 建置 → 部署到 GitHub Pages。
+# 第一次使用：GitHub repo → Settings → Pages → Source 選「GitHub Actions」。
+# 網址會是 https://<帳號>.github.io/<repo 名稱>/（repo 名稱取 <帳號>.github.io 時就是 https://<帳號>.github.io/）
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      # 網址在 /<repo 名稱>/ 底下；repo 名稱是 <帳號>.github.io 時網址在根目錄 /
+      - run: npm run build
+        env:
+          BASE_PATH: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}/', github.event.repository.name) }}
+      # GitHub Pages 沒有 SPA fallback：直接開 /project/rack 時用 404.html 載入同一個網頁
+      - run: cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

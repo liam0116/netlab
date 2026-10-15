@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.DS_Store
+*.log
+Dockerfile
+docker-compose*.yml
+*.md
+.env
+# 舊版（有後端時）的專案資料夾：不打包進映像、不進版本控制
+projects/
+projects-test/
+projects-dev/

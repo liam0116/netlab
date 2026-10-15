@@ -1,0 +1,36 @@
+# =============================================================================
+# Server Engineer Network Lab — 正式環境（Production）
+#
+# 純前端網頁（nginx），沒有後端。專案資料存在「瀏覽器」裡，匯出的 .netlab.json 檔是備份。
+#   網頁：http://localhost:8080
+#
+# 平常在手機 / 平板上用的是部署到 GitHub Pages / Cloudflare Pages 的版本（見 docs/DEPLOY.md），
+# 這份是給「在自己電腦上開一份」用的。
+#
+# 快速開始（在專案根目錄執行）：
+#   cp .env.example .env          # 第一次使用：複製設定檔（可不改，直接用預設值）
+#   docker compose up -d --build  # 建置並在背景啟動
+#
+# 常用指令：
+#   docker compose ps             # 查看狀態（STATUS 要顯示 healthy）
+#   docker compose down           # 停止並移除容器
+#
+# 其他 compose 檔：
+#   docker-compose.test.yml        測試環境：試新版本，port 8081
+#   docker-compose.dev.yml         開發環境：改程式碼自動重新載入（寫程式時才用）
+#
+# 完整中文說明：docs/DOCKER.md
+# =============================================================================
+
+# 固定專案名稱（容器會叫 netlab-web-1），不受資料夾名稱影響
+name: netlab
+
+services:
+  web:
+    build: .
+    image: netlab-web:latest
+    ports:
+      # 「主機 port:容器 port」。8080 被佔用時，在 .env 改 WEB_PORT。
+      # 預設只綁 127.0.0.1（只有本機能開）；要讓同網段的人連，.env 設 WEB_BIND=0.0.0.0
+      - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-8080}:80"
+    restart: unless-stopped

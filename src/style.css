@@ -1,0 +1,183 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens: light by default, overridden under .dark (default theme). */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --line: #d9dee6;
+  --fg: #0f172a;
+  --muted: #5b6678;
+  --accent: #0e7490;
+  --accent-soft: #cff3f9;
+  --net: #2563eb;
+  --net-soft: #dbe6fd;
+  --host: #b45309;
+  --host-soft: #fdecd3;
+  --ok: #15803d;
+  --ok-soft: #dcf5e3;
+  --warn: #b45309;
+  --warn-soft: #fdf0d5;
+  --err: #b91c1c;
+  --err-soft: #fde2e2;
+}
+
+.dark {
+  --bg: #0a0f17;
+  --surface: #111824;
+  --surface-2: #0d131d;
+  --line: #222d3d;
+  --fg: #dbe3ee;
+  --muted: #8693a6;
+  --accent: #22d3ee;
+  --accent-soft: #0e3440;
+  --net: #60a5fa;
+  --net-soft: #15284a;
+  --host: #fbbf24;
+  --host-soft: #3a2a0c;
+  --ok: #34d399;
+  --ok-soft: #0c3326;
+  --warn: #fbbf24;
+  --warn-soft: #3a2a0c;
+  --err: #f87171;
+  --err-soft: #3d1414;
+}
+
+/* Document surface (handover report): always the light palette, even in dark mode. */
+.paper {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f4f8;
+  --line: #d3d9e2;
+  --fg: #0f172a;
+  --muted: #5b6678;
+  --accent: #0e7490;
+  --accent-soft: #cff3f9;
+  --net: #2563eb;
+  --net-soft: #dbe6fd;
+  --host: #b45309;
+  --host-soft: #fdecd3;
+  --ok: #15803d;
+  --ok-soft: #dcf5e3;
+  --warn: #b45309;
+  --warn-soft: #fdf0d5;
+  --err: #b91c1c;
+  --err-soft: #fde2e2;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  /* Keep diagram colours and table shading when printing. */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-net: var(--net);
+  --color-net-soft: var(--net-soft);
+  --color-host: var(--host);
+  --color-host-soft: var(--host-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-err: var(--err);
+  --color-err-soft: var(--err-soft);
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  @apply font-sans antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-lg border border-line bg-surface;
+  }
+  .field {
+    @apply w-full rounded-md border border-line bg-surface-2 px-3 py-2 font-mono text-sm text-fg outline-none transition-colors placeholder:text-muted/60 focus:border-accent;
+  }
+  .field-invalid {
+    @apply border-err focus:border-err;
+  }
+  .label {
+    @apply mb-1 block text-xs font-medium tracking-wide text-muted uppercase;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line bg-surface-2 px-3 py-2 text-sm font-medium text-fg transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-fg;
+  }
+  .btn-primary {
+    @apply border-accent bg-accent text-bg hover:bg-accent/85 hover:text-bg;
+  }
+  .kbd {
+    @apply rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-xs;
+  }
+}
+
+/*
+ * Enter-only animations for keyed elements. A changed :key remounts the element and the animation
+ * replays. Used instead of <Transition mode="out-in">, which can get stuck on rapid changes.
+ */
+.anim-page {
+  animation: anim-page 0.18s ease-out both;
+}
+.anim-slide {
+  animation: anim-slide 0.2s ease-out both;
+}
+.anim-fade {
+  animation: anim-fade 0.18s ease-out both;
+}
+@keyframes anim-page {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@keyframes anim-slide {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+@keyframes anim-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
