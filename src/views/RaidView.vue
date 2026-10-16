@@ -41,7 +41,7 @@ const rows = computed(() =>
     <section class="card p-5">
       <h2 class="mb-1 text-lg font-semibold">{{ t('raidPage.simTitle') }}</h2>
       <p class="mb-4 text-sm text-muted">{{ t('raidPage.simHint') }}</p>
-      <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <RaidSimulator v-model:level="level" />
         <aside class="space-y-3 rounded-lg border border-line bg-surface-2 p-4 text-sm">
           <h3 class="font-semibold">{{ levelText.name }}</h3>

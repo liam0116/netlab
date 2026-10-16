@@ -99,7 +99,7 @@ function downloadAll(): void {
 
     <p v-if="!servers.length && !switches.length" class="card p-6 text-center text-sm text-muted">{{ t('configPage.empty') }}</p>
 
-    <div v-else class="grid gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]">
+    <div v-else class="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]">
       <aside class="card space-y-4 p-4">
         <div>
           <label for="cg-device" class="label">{{ t('configPage.device') }}</label>

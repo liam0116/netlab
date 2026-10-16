@@ -80,7 +80,7 @@ function restart(): void {
 
         <TerminalBlock :command="fillGateway(current.command, gateway)" />
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
           <div class="space-y-1.5">
             <h3 class="text-xs font-semibold text-ok">{{ t('troublePage.expectNormal') }}</h3>
             <pre class="overflow-x-auto rounded-md border border-ok/40 bg-surface-2 p-3 font-mono text-xs leading-relaxed">{{ fillGateway(current.normalOutput, gateway) }}</pre>
@@ -113,7 +113,7 @@ function restart(): void {
             {{ t('troublePage.stoppedAt', { step: texts.steps[diagnosisId]!.question }) }}
           </template>
         </StatusBanner>
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
           <div class="card p-4">
             <h3 class="mb-2 font-semibold">{{ t('troublePage.causes') }}</h3>
             <ul class="flex flex-wrap gap-2 text-sm">
