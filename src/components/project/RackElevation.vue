@@ -72,19 +72,32 @@ function onMove(event: PointerEvent): void {
 function onUp(): void {
   drag = null
 }
+
+/*
+ * iOS Safari does not always honour `touch-action: none` on SVG, so the page scrolled along with the
+ * finger. Cancelling the touch on a device (and any touch move while dragging) keeps the page still;
+ * pointer events still arrive. Touches on empty rack space scroll the page as usual.
+ */
+function onTouchStart(event: TouchEvent): void {
+  if (props.interactive) event.preventDefault()
+}
+function onTouchMove(event: TouchEvent): void {
+  if (drag) event.preventDefault()
+}
 </script>
 
 <template>
   <svg
     ref="svg"
     :viewBox="`0 0 ${LEFT + WIDTH + 10} ${height}`"
-    class="h-auto w-full max-w-[340px] touch-none select-none"
+    class="h-auto w-full max-w-[340px] select-none"
     role="img"
     :aria-label="rack.name"
     @pointermove="onMove"
     @pointerup="onUp"
     @pointercancel="onUp"
     @pointerdown="interactive && emit('select', null)"
+    @touchmove="onTouchMove"
   >
     <text :x="LEFT + WIDTH / 2" y="18" text-anchor="middle" style="fill: var(--fg); font-size: 14px; font-weight: 600">{{ rack.name }}</text>
     <text v-if="rack.location" :x="LEFT + WIDTH / 2" y="32" text-anchor="middle" style="fill: var(--muted); font-size: 10px">{{ rack.location }}</text>
@@ -100,8 +113,10 @@ function onUp(): void {
     <g
       v-for="it in inRack"
       :key="it.id"
+      :class="{ 'touch-none': interactive }"
       :style="{ cursor: interactive ? 'grab' : 'default' }"
       @pointerdown="onDown($event, it)"
+      @touchstart="onTouchStart"
     >
       <rect
         :x="LEFT + 2"

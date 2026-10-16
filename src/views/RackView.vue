@@ -357,9 +357,9 @@ function rackLimits(f: (typeof rackNumberFields)[number]) {
         <p v-if="fullMessage" class="mt-2 text-xs text-err">{{ fullMessage }}</p>
       </section>
 
-      <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]">
-        <!-- Racks side by side -->
-        <div class="flex gap-4 overflow-x-auto pb-2">
+      <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]">
+        <!-- Racks side by side; each card keeps its own height instead of stretching to the inspector beside it. -->
+        <div class="flex items-start gap-4 overflow-x-auto pb-2">
           <div
             v-for="r in project.racks"
             :id="`rack-card-${r.id}`"
