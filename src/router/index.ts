@@ -91,6 +91,7 @@ const router = createRouter({
     { path: '/service/maintenance', name: 'maintenance', component: () => import('@/views/MaintenanceView.vue'), meta: { title: 'Maintenance' } },
     // v1.3.0 had work orders under Project.
     { path: '/project/maintenance', redirect: '/service/maintenance' },
+    { path: '/tools/cable-labels', name: 'cable-labels', component: () => import('@/views/CableLabelsView.vue'), meta: { title: 'Cable Labels' } },
     { path: '/tools/calculators', name: 'calculators', component: () => import('@/views/CalculatorsView.vue'), meta: { title: 'Field Calculators' } },
     { path: '/project/config', name: 'config', component: () => import('@/views/ConfigGeneratorView.vue'), meta: { title: 'Config Generator' } },
     { path: '/project/report', name: 'report', component: () => import('@/views/ReportView.vue'), meta: { title: 'Handover Report' } },

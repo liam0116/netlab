@@ -25,6 +25,7 @@ import {
   Router,
   Send,
   SquareTerminal,
+  Tags,
   Workflow,
   Wrench,
 } from 'lucide-vue-next'
@@ -71,6 +72,7 @@ export const navSections: NavSection[] = [
     id: 'tools',
     title: 'Tools',
     items: [
+      { id: 'cable-labels', label: 'Cable Labels', to: '/tools/cable-labels', icon: Tags, phase: 4 },
       { id: 'subnet', label: 'Subnet Calculator', to: '/tools/subnet', icon: Calculator, phase: 1 },
       { id: 'cidr', label: 'CIDR Converter', to: '/tools/cidr', icon: ArrowLeftRight, phase: 1 },
       { id: 'binary', label: 'Binary Calculator', to: '/tools/binary', icon: Binary, phase: 1 },

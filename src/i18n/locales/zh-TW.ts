@@ -8,12 +8,14 @@ import zhTWPhase2 from './zh-TW.phase2'
 import zhTWPhase4 from './zh-TW.phase4'
 import zhTWPhase5 from './zh-TW.phase5'
 import zhTWPhase6 from './zh-TW.phase6'
+import zhTWPhase7 from './zh-TW.phase7'
 
 const zhTW = {
   ...zhTWPhase2,
   ...zhTWPhase4,
   ...zhTWPhase5,
   ...zhTWPhase6,
+  ...zhTWPhase7,
   app: {
     name: 'Server Engineer Network Lab',
     tagline: 'server engineer toolkit',
@@ -70,6 +72,12 @@ const zhTW = {
   nav: {
     items: {
       dashboard: { name: '首頁', short: 'Server Engineer Toolkit 首頁' },
+      'cable-labels': {
+        name: '線路標籤',
+        short: '輸入標籤，匯出標籤紙 Excel 範本',
+        what: '批次產生或貼上線路標籤（例如 PeoEsxi21_PS2、加 L / R 或 1 / 2 分兩端），匯出成標籤紙廠商的 Excel 範本，格式和原本一模一樣，打開就能印在標籤紙上。',
+        when: '上架接線前要印線路標籤的時候。',
+      },
       calculators: {
         name: '現場計算機',
         short: '搬移時間、儲存容量、電力 / UPS',

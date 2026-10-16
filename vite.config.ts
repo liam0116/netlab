@@ -32,7 +32,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // The cable-label Excel template is included so label export works offline.
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,xlsx}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
     }),

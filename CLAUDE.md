@@ -55,14 +55,16 @@ src/
 | `netlab.maintenance` | 維修工單 |
 | `netlab.plannerTool` | Tools → IP Planner 的試算 |
 | `netlab.topology` | Lab 拓撲 |
+| `netlab.labels` | Tools → Cable Labels 的標籤清單與產生設定 |
 | `netlab.locale` / `netlab.theme` / `netlab.mode` / `netlab.completedChapters` | 設定與學習進度 |
 
 - **不要改 key 名稱**，使用者的資料會不見。
+- 使用者上傳的標籤範本（xlsx，太大放不進 localStorage）存在 IndexedDB：資料庫 `netlab`、store `files`、key `labelTemplate`。
 - **格式變更**：在 store 載入時做一次性轉換。例如 v1.3.0 存在專案裡的工單，會在 `main.ts` 啟動時搬到 `netlab.maintenance`。
 
 ## i18n
 - `zh-TW.ts` 是主要語系，也是型別來源；`en.ts` 必須有完全相同的 key（`i18n.test.ts` 會檢查）。
-- 新增的文字放在 `<locale>.phase*.ts`，由主檔合併：phase5 是專案相關，phase6 是維修工單。
+- 新增的文字放在 `<locale>.phase*.ts`，由主檔合併：phase5 是專案相關，phase6 是維修工單，phase7 是線路標籤。
 - 訊息裡不能有 `|`、`@`（vue-i18n 特殊字元）；需要這些字元的長內容放 `i18n/content/*.ts`。
 - `utils/` 裡不放任何語言文字。
 
@@ -74,6 +76,7 @@ src/
   - 圖用 inline-block，在 `@media print` 設 `max-height` 縮到一頁內。
   - 每張工單用 `break-before: page` 另起一頁。
 - **匯出 SVG / PNG**：用 `utils/svgExport.ts`。圖要用 inline style 加 CSS 變數，匯出才會正確。
+- **線路標籤 xlsx**：`public/templates/cable-labels.xlsx` 是標籤紙廠商的範本（已移除客戶與作者資訊）。只能改儲存格內容，不要動格式、列高、版面設定，使用者要求和原檔一模一樣。超過一張標籤紙（30 張）就分成多個檔案，不要在同一個工作表加頁（縮放比例會變，印不準）。
 - **手機寬度（390px）**：不能出現橫向捲動。
 
 ## 驗證流程（每次改完都要做，不能只跑單元測試）

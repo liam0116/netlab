@@ -3,12 +3,14 @@ import enPhase2 from './en.phase2'
 import enPhase4 from './en.phase4'
 import enPhase5 from './en.phase5'
 import enPhase6 from './en.phase6'
+import enPhase7 from './en.phase7'
 
 const en: MessageSchema = {
   ...enPhase2,
   ...enPhase4,
   ...enPhase5,
   ...enPhase6,
+  ...enPhase7,
   app: {
     name: 'Server Engineer Network Lab',
     tagline: 'server engineer toolkit',
@@ -65,6 +67,12 @@ const en: MessageSchema = {
   nav: {
     items: {
       dashboard: { name: 'Dashboard', short: 'Server Engineer Toolkit home' },
+      'cable-labels': {
+        name: 'Cable Labels',
+        short: 'Type labels, export the label-sheet Excel template',
+        what: 'Generate or paste cable labels (e.g. PeoEsxi21_PS2, with L / R or 1 / 2 for the two ends) and export them into the label supplier’s Excel template, unchanged, ready to print on the label sheets.',
+        when: 'Before racking and cabling, when the cable labels need printing.',
+      },
       calculators: {
         name: 'Field Calculators',
         short: 'Transfer time, storage, power / UPS',

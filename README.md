@@ -3,7 +3,7 @@
 給伺服器 / 設備工程師的現場工具與 TCP/IP 學習網站：客戶專案規劃（IP、機櫃、佈線、流程圖、交付文件）、硬體維修工單，以及網路計算工具與新手教學。
 所有 IPv4 計算都用真正的 32-bit bitwise 運算完成（`src/utils/network.ts`），並有 Unit Test 覆蓋。
 
-目前版本：**v1.3.7**
+目前版本：**v1.4.0**
 
 ## 手機 / 平板使用（主要用法）
 
@@ -15,6 +15,7 @@
 | --- | --- | --- |
 | 客戶專案（新建置） | `.netlab.json` | Project → Projects |
 | 維修工單 | `.netlab-job.json` | Service → Maintenance |
+| 線路標籤 | `.xlsx`（標籤紙 Excel 範本） | Tools → Cable Labels |
 
 📱 **部署與手機安裝步驟：[docs/DEPLOY.md](docs/DEPLOY.md)**
 
@@ -107,6 +108,7 @@ docker compose down                                         # 停止
 ### Tools · 工具
 | 功能 | 路徑 |
 | --- | --- |
+| **Cable Labels 線路標籤**：批次產生（設備 + Port，支援 `P1-4`、`esx01-04` 範圍、L / R 或 1 / 2 分兩端、大小寫）、從 Excel 貼上、帶入目前專案的佈線；匯出成標籤紙廠商的 Excel 範本，格式一模一樣（每張標籤紙 30 張，一張一個檔案）；可改用自己調好印表機邊界的範本；頁面上有列印注意事項與印表機對位說明 | `/tools/cable-labels` |
 | Subnet Calculator（可分享連結 `?ip=&cidr=`） | `/tools/subnet` |
 | CIDR Converter（Mask ↔ /CIDR 動畫 + 對照表） | `/tools/cidr` |
 | Binary Calculator（十進位 ↔ 二進位逐步動畫） | `/tools/binary` |
@@ -193,6 +195,8 @@ src/
 │   ├── projectFile.ts     # 專案檔序列化與匯入驗證
 │   ├── maintenance.ts     # 維修工單：插槽解析、衝突檢查、各主機異動、產生流程圖
 │   ├── maintenanceFile.ts # 工單檔匯出 / 匯入（和專案檔分開）
+│   ├── cableLabels.ts     # 線路標籤命名：範圍展開、兩端標記、貼上、帶入佈線
+│   ├── labelWorkbook.ts   # 把標籤填進標籤紙 Excel 範本（只改儲存格內容）
 │   ├── svgExport.ts       # 圖表匯出 SVG / PNG（固定淺色）
 │   └── quiz.ts            # 小測驗題目產生器（答案由上述模組計算）
 └── views/           # 每個頁面一個 *View.vue
@@ -211,6 +215,7 @@ docs/DOCKER.md       # Docker 中文設定說明
 - 非連續的 Mask（如 `255.0.255.0`）會被拒絕。
 
 ## 版本紀錄
+- **v1.4（2026-10）**：新增 Tools · Cable Labels 線路標籤，匯出成標籤紙的 Excel 範本（`public/templates/cable-labels.xlsx`）。
 - **v1.3（2026-10）**：
   - 新增 Service · 維修工單，和專案分開存放，可列印 / 存成 PDF。
   - 流程圖新增適用對象、插入步驟、複製，以及硬體維修、VM 遷移範本。
